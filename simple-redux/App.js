@@ -1,45 +1,40 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import CounterApp from './src/CounterApp';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
+
+const initialState = {
+  counter : 0
+}
+const reducer = (state = initialState, action) => {
+  switch(action.type){
+    case 'INCREASE_COUNTER' : return{counter : state.counter +1}
+    case 'DECREASE_COUNTER' : return{counter : state.counter -1}
+  }
+  return state
+}
+
+const store = createStore(reducer);
+
+
 
 export default class App extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      counter : 0 ,
-    };
-  }
-
-  increaseCounter = () => {
-    this.setState({counter : this.state.counter +1});
-  }
-
-  decreaseCounter = () => {
-    this.setState({counter : this.state.counter -1})
-  }
+  /**
+   * Store : holds our state (THE STATE IS READ ONLY)
+   * Action : State can be modified using actions (SIMPLE OBJECTS)
+   * Dispatcher : sends Actions to the reducer
+   * Reducer : receives the action and modifies the state and gives us the nes state
+   * - pure functions
+   * - only mandatory argument is the 'type'
+   * Subscriber : listens for state change to update the ui
+   */
 
   render () {   
   return (
-    <View style={styles.container}>
-      <View style={{flexDirection: 'row' , width: 200 , justifyContent: 'space-around'}} >
-          <TouchableOpacity onPress={() => this.increaseCounter()}>
-            <Text style={{fontSize: 20}}>Increase</Text>
-          </TouchableOpacity>
-            <Text style={{fontSize: 20}} >{this.state.counter}</Text>
-          <TouchableOpacity onPress={() => this.decreaseCounter()}>
-            <Text style={{fontSize: 20}} >Decrease</Text>
-          </TouchableOpacity>
-      </View>
-    </View>
+    <Provider store = {store}>
+      <CounterApp/>
+    </Provider>
   );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
